@@ -10,7 +10,7 @@ from scipy.cluster.vq import kmeans
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', help="Filename or path of the image to compress")
 parser.add_argument('-o', dest='outputdir', default=os.getcwd(), help="Directory to output the compressed image to.")
-parser.add_argument('-l', dest="compresslevel", default=64, type=int, help="How many bits to reduce the image to (Defaults to 64).")
+parser.add_argument('-l', dest="compresslevel", default=32, type=int, help="How many bits to reduce the image to (Defaults to 32).")
 parser.add_argument('-i', dest="maxiter", default=10, type=int, help="Maximum number of iterations to run kmeans (Defaults to 10).")
 args = parser.parse_args()
 
