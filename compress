@@ -1,16 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 import numpy as np
 import numpy.linalg as lg
 import os
 from scipy.misc import imsave
 from scipy.ndimage import imread
+from scipy.cluster.vq import kmeans
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', help="Filename or path of the image to compress")
 parser.add_argument('-o', dest='outputdir', default=os.getcwd(), help="Directory to output the compressed image to.")
-parser.add_argument('-l', dest="compresslevel", default=64, type=int, help="How many bits to compress the image to (Defaults to 64)")
-parser.add_argument('-i', dest="maxiter", default=100, type=int, help="Maximum number of iterations to run kmeans (Defaults to 100)")
+parser.add_argument('-l', dest="compresslevel", default=64, type=int, help="How many bits to reduce the image to (Defaults to 64).")
+parser.add_argument('-i', dest="maxiter", default=10, type=int, help="Maximum number of iterations to run kmeans (Defaults to 10).")
 args = parser.parse_args()
 
 img = imread(args.filename)
@@ -22,34 +23,20 @@ stdev = img.std(axis=0)
 
 img = (img-minval)/stdev
 
-def kmeans(img, init):
-    m, n = img.size
-    K = init.shape[1]
-    centroids = init;
-    previous_centroids = centroids;
-    idx = np.zeros((m, 1));
-
-    for _ in range(args.maxiter):
-        pass
-
-def get_idx(img, centroids):
+def find_centroids(img, centroids):
     K = args.compresslevel
     m = img.shape[0]
-
     idx = np.zeros(m)
     for i in range(m):
-        mindist = np.inf
-        for j in range(K):
-            dist = lg.norm(img[i,:]-centroids[j,:])
-            if dist < mindist:
-                mindist = dist
-                idx[i] = j
-        print(idx)
-    return idx
+        idx[i] = lg.norm(img[i,:]-centroids, axis=1).argmin()
+    return np.array(idx, dtype=int)
 
 K = args.compresslevel
-centroids = np.zeros((K, img.shape[1]))
-get_idx(img, centroids)
+centroids, cost = kmeans(img, K, args.maxiter)
+idx = find_centroids(img, centroids)
+img_rec = centroids[idx,:]
+img_rec = img_rec.reshape((img_size[0], img_size[1], img.shape[1]))
+img_rec = img_rec*stdev+minval
+
 filename = os.path.join(args.outputdir, os.path.basename(args.filename))
-img = img.reshape((img_size[0], img_size[1], 3))*stdev+minval
-imsave(filename, img)
+imsave(filename, img_rec)
