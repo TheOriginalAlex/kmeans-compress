@@ -38,5 +38,8 @@ img_rec = centroids[idx,:]
 img_rec = img_rec.reshape((img_size[0], img_size[1], img.shape[1]))
 img_rec = img_rec*stdev+minval
 
+outputdir = args.outputdir
+if not os.path.exists(outputdir):
+    os.makedirs(outputdir)
 filename = os.path.join(args.outputdir, os.path.basename(args.filename))
 imsave(filename, img_rec)
