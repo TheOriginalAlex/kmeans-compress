@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+import argparse
+import cPickle as pickle
+import numpy as np
+import numpy.linalg as lg
+import os
+from scipy.ndimage import imread
+
+parser = argparse.ArgumentParser()
+parser.add_argument('filename', help="Filename or path of the image to compress")
+parser.add_argument('-o', dest='outputdir', default=os.getcwd(), help="Directory to output the compressed image to.")
+parser.add_argument('-l', dest="compresslevel", default=16, help="How many bits to compress the image to (Defaults to 16)")
+parser.add_argument('-i', dest="maxiter", default=100, help="Maximum number of iterations to run kmeans (Defaults to 100)")
+args = parser.parse_args()
+
+img = imread(args.filename)
+img_size = (img.shape[0],img.shape[1])
+img = img.reshape(img_size[0]*img_size[1], img.shape[2])
+
+def kmeans(img, init):
+    m, n = img.size
+    K = init.shape[1]
+    centroids = init;
+    previous_centroids = centroids;
+    idx = np.zeros((m, 1));
+
+    for _ in range(args.maxiter):
+        pass
