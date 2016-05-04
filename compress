@@ -5,7 +5,7 @@ import numpy.linalg as lg
 import os
 from scipy.misc import imsave
 from scipy.ndimage import imread
-from scipy.cluster.vq import kmeans
+from scipy.cluster.vq import kmeans, whiten
 
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', help="Filename or path of the image to compress")
@@ -32,7 +32,7 @@ def find_centroids(img, centroids):
     return np.array(idx, dtype=int)
 
 K = args.compresslevel
-centroids, cost = kmeans(img, K, args.maxiter)
+centroids, cost = kmeans(whiten(img), K, args.maxiter)
 idx = find_centroids(img, centroids)
 img_rec = centroids[idx,:]
 img_rec = img_rec.reshape((img_size[0], img_size[1], img.shape[1]))
