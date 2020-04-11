@@ -3,8 +3,8 @@ import argparse
 import numpy as np
 import numpy.linalg as lg
 import os
-from scipy.misc import imsave
-from scipy.ndimage import imread
+from imageio import imwrite
+from imageio import imread
 from scipy.cluster.vq import kmeans, whiten
 
 parser = argparse.ArgumentParser()
@@ -42,4 +42,4 @@ outputdir = args.outputdir
 if not os.path.exists(outputdir):
     os.makedirs(outputdir)
 filename = os.path.join(args.outputdir, os.path.basename(args.filename))
-imsave(filename, img_rec)
+imwrite(filename, img_rec)
